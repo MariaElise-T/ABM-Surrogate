@@ -119,14 +119,18 @@ def train_model(model, dataloader, optimizer, loss_fn, num_epochs, device):
 # Set up      
 ##################################################################
 
-data_input = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_inputs.csv", sep=" ", header=None)
-
-scaler = MinMaxScaler(feature_range=(0, 1))
-scaler.fit(data_input)
-data_input = scaler.transform(data_input)
-data_input = pd.DataFrame(data_input)
+print("Importing data...\n")
 
 data_output = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_outputs_active.csv", header=None)
+print("Max value is :", data_output.to_numpy().max(), "\n")
+
+scaler = MinMaxScaler(feature_range=(0, data_output.to_numpy().max()))
+scaler.fit(data_output)
+data_output = scaler.transform(data_output)
+data_output = pd.DataFrame(data_output)
+
+data_output = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_outputs_active.csv", header=None)
+data_input = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_inputs.csv", sep=" ", header=None)
 data = pd.concat([data_input, data_output], axis=1)
 
 # Split the data into training and validation sets
@@ -138,6 +142,8 @@ valid_data.to_csv("validation_set_epstein.csv", index=False)
 ##################################################################
 # Model 1      
 ##################################################################
+
+print("Starting model 1\n")
 
 dataset = TimeSeriesDataset(train_data)
 
@@ -168,3 +174,183 @@ loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
 df = pd.DataFrame(loss, columns=["loss"])
 df.to_csv('transformer_adam_lr001_epstein_loss.csv', index=False)
 torch.save(model.state_dict(), "transformer_adam_lr001_epstein.pth")
+
+##################################################################
+# Model 2      
+##################################################################
+
+print("Starting model 2\n")
+
+dataset = TimeSeriesDataset(train_data)
+
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+input_dim = 3      # Number of input features
+output_dim = 1     # Predicting one value per time step
+seq_length = 252   # Number of time steps in output
+d_model = 128      # Embedding dimension for Transformer
+nhead = 4          # Number of attention heads
+num_layers = 2     # Number of Transformer layers
+dim_feedforward = 512  # Feedforward network size
+
+# Instantiate the model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = TransformerTimeSeriesModel(
+    input_dim, output_dim, seq_length, d_model, nhead, num_layers, dim_feedforward
+).to(device)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+loss_fn = torch.nn.MSELoss()  # Regression loss
+
+# Training loop
+num_epochs = 20  # Adjust based on dataset size and performance
+loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
+
+df = pd.DataFrame(loss, columns=["loss"])
+df.to_csv('transformer_adam_lr01_epstein_loss.csv', index=False)
+torch.save(model.state_dict(), "transformer_adam_lr01_epstein.pth")
+
+##################################################################
+# Model 3      
+##################################################################
+
+print("Starting model 3\n")
+
+dataset = TimeSeriesDataset(train_data)
+
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+input_dim = 3      # Number of input features
+output_dim = 1     # Predicting one value per time step
+seq_length = 252   # Number of time steps in output
+d_model = 128      # Embedding dimension for Transformer
+nhead = 4          # Number of attention heads
+num_layers = 2     # Number of Transformer layers
+dim_feedforward = 512  # Feedforward network size
+
+# Instantiate the model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = TransformerTimeSeriesModel(
+    input_dim, output_dim, seq_length, d_model, nhead, num_layers, dim_feedforward
+).to(device)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+loss_fn = torch.nn.MSELoss()  # Regression loss
+
+# Training loop
+num_epochs = 20  # Adjust based on dataset size and performance
+loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
+
+df = pd.DataFrame(loss, columns=["loss"])
+df.to_csv('transformer_adam_lr0001_epstein_loss.csv', index=False)
+torch.save(model.state_dict(), "transformer_adam_lr0001_epstein.pth")
+
+##################################################################
+# Model 4      
+##################################################################
+
+print("Starting model 4\n")
+
+dataset = TimeSeriesDataset(train_data)
+
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+input_dim = 3      # Number of input features
+output_dim = 1     # Predicting one value per time step
+seq_length = 252   # Number of time steps in output
+d_model = 128      # Embedding dimension for Transformer
+nhead = 4          # Number of attention heads
+num_layers = 2     # Number of Transformer layers
+dim_feedforward = 512  # Feedforward network size
+
+# Instantiate the model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = TransformerTimeSeriesModel(
+    input_dim, output_dim, seq_length, d_model, nhead, num_layers, dim_feedforward
+).to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
+loss_fn = torch.nn.MSELoss()  # Regression loss
+
+# Training loop
+num_epochs = 20  # Adjust based on dataset size and performance
+loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
+
+df = pd.DataFrame(loss, columns=["loss"])
+df.to_csv('transformer_adamW_lr001_epstein_loss.csv', index=False)
+torch.save(model.state_dict(), "transformer_adamW_lr001_epstein.pth")
+
+##################################################################
+# Model 5      
+##################################################################
+
+print("Starting model 5\n")
+
+dataset = TimeSeriesDataset(train_data)
+
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+input_dim = 3      # Number of input features
+output_dim = 1     # Predicting one value per time step
+seq_length = 252   # Number of time steps in output
+d_model = 128      # Embedding dimension for Transformer
+nhead = 4          # Number of attention heads
+num_layers = 2     # Number of Transformer layers
+dim_feedforward = 512  # Feedforward network size
+
+# Instantiate the model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = TransformerTimeSeriesModel(
+    input_dim, output_dim, seq_length, d_model, nhead, num_layers, dim_feedforward
+).to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.01)
+loss_fn = torch.nn.MSELoss()  # Regression loss
+
+# Training loop
+num_epochs = 20  # Adjust based on dataset size and performance
+loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
+
+df = pd.DataFrame(loss, columns=["loss"])
+df.to_csv('transformer_adamW_lr01_epstein_loss.csv', index=False)
+torch.save(model.state_dict(), "transformer_adamW_lr01_epstein.pth")
+
+##################################################################
+# Model 6      
+##################################################################
+
+print("Starting model 6\n")
+
+dataset = TimeSeriesDataset(train_data)
+
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+input_dim = 3      # Number of input features
+output_dim = 1     # Predicting one value per time step
+seq_length = 252   # Number of time steps in output
+d_model = 128      # Embedding dimension for Transformer
+nhead = 4          # Number of attention heads
+num_layers = 2     # Number of Transformer layers
+dim_feedforward = 512  # Feedforward network size
+
+# Instantiate the model
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = TransformerTimeSeriesModel(
+    input_dim, output_dim, seq_length, d_model, nhead, num_layers, dim_feedforward
+).to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.0001)
+loss_fn = torch.nn.MSELoss()  # Regression loss
+
+# Training loop
+num_epochs = 20  # Adjust based on dataset size and performance
+loss = train_model(model, dataloader, optimizer, loss_fn, num_epochs, device)
+
+df = pd.DataFrame(loss, columns=["loss"])
+df.to_csv('transformer_adamW_lr0001_epstein_loss.csv', index=False)
+torch.save(model.state_dict(), "transformer_adamW_lr0001_epstein.pth")
