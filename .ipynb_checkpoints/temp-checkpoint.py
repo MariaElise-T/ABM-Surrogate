@@ -121,16 +121,16 @@ def train_model(model, dataloader, optimizer, loss_fn, num_epochs, device):
 
 print("Importing data...\n")
 
-data_output = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_outputs_active.csv", header=None)
+data_output = pd.read_csv("epsteinCV_outputs_active.csv", header=None)
 print("Max value is :", data_output.to_numpy().max(), "\n")
 
-scaler = MinMaxScaler(feature_range=(0, data_output.to_numpy().max()))
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaler.data_max_ = 1600
 scaler.fit(data_output)
 data_output = scaler.transform(data_output)
 data_output = pd.DataFrame(data_output)
 
-data_output = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_outputs_active.csv", header=None)
-data_input = pd.read_csv("~/Desktop/TS-Clustering/SimData/epsteinCV_inputs.csv", sep=" ", header=None)
+data_input = pd.read_csv("epsteinCV_inputs.csv", sep=" ", header=None)
 data = pd.concat([data_input, data_output], axis=1)
 
 # Split the data into training and validation sets
