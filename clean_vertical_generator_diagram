@@ -1,0 +1,28 @@
+digraph {
+	rankdir=TB size="6,10"
+	node [fillcolor=lightblue fontname=Helvetica fontsize=12 shape=ellipse style=filled]
+	z [label="Latent Vector (z)
+[B, latent_dim]"]
+	cond [label="Condition Vector
+[B, condition_dim]"]
+	node [fillcolor=white fontname=Helvetica fontsize=12 shape=box style="rounded,filled"]
+	concat [label="Concatenate z + cond
+→ [B, latent+cond]"]
+	linear1 [label="Linear Layer (input_proj)
+→ [B, H]"]
+	repeat [label="Repeat across time
+→ [B, T, H]"]
+	lstm [label="LSTM
+→ [B, T, H]"]
+	linear2 [label="Linear (output_proj)
+→ [B, T, 1]"]
+	squeeze [label="Squeeze
+→ [B, T]"]
+	z -> concat
+	cond -> concat
+	concat -> linear1
+	linear1 -> repeat
+	repeat -> lstm
+	lstm -> linear2
+	linear2 -> squeeze
+}

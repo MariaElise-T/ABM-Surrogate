@@ -1,0 +1,27 @@
+// Conditional Generator Architecture
+digraph {
+	rankdir=LR size=8
+	Z [label="Latent Vector (z)
+[B, latent_dim]" shape=oval]
+	Cond [label="Condition Vector
+[B, condition_dim]" shape=oval]
+	Concat [label="Concat z + cond
+[B, latent+cond]" shape=box]
+	InputProj [label="Linear Layer (input_proj)
+→ [B, H]" shape=box]
+	Repeat [label="Repeat across time
+→ [B, T, H]" shape=box]
+	LSTM [label="LSTM
+→ [B, T, H]" shape=box]
+	OutProj [label="Linear (output_proj)
+→ [B, T, 1]" shape=box]
+	Squeeze [label="Squeeze
+→ [B, T]" shape=box]
+	Z -> Concat
+	Cond -> Concat
+	Concat -> InputProj
+	InputProj -> Repeat
+	Repeat -> LSTM
+	LSTM -> OutProj
+	OutProj -> Squeeze
+}
